@@ -60,7 +60,7 @@ export function TodoSection() {
   };
 
   return (
-    <div className="px-6 py-5 border-t border-gray-200 dark:border-gray-700 flex-1 flex flex-col min-h-0">
+    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700 flex-1 flex flex-col min-h-0">
       {/* Todo list */}
       <div className="flex-1 overflow-y-auto space-y-1">
         {activeTodos.map((todo, index) => (

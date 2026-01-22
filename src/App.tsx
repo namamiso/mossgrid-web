@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <header className="flex items-center justify-between px-8 py-5 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowSettings(true)}
