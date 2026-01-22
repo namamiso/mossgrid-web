@@ -193,11 +193,21 @@ export function HabitSection() {
                 <button
                   onClick={() => !isFuture && toggleCompletion(habit.id, selectedDate)}
                   disabled={isFuture}
-                  className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isFuture ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`w-5 h-5 rounded flex items-center justify-center transition-all ${isFuture ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   style={{
                     backgroundColor: completed ? 'var(--accent-green)' : 'transparent',
                     border: completed ? 'none' : '2px solid var(--border-primary)',
                     color: 'white'
+                  }}
+                  onMouseEnter={e => {
+                    if (!isFuture && !completed) {
+                      e.currentTarget.style.borderColor = 'var(--accent-green)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!completed) {
+                      e.currentTarget.style.borderColor = 'var(--border-primary)';
+                    }
                   }}
                 >
                   {completed && (
@@ -208,8 +218,10 @@ export function HabitSection() {
                 </button>
                 <button
                   onClick={() => openEdit(habit.id)}
-                  className="flex-1 text-left truncate"
+                  className="flex-1 text-left truncate transition-colors"
                   style={{ color: completed ? 'var(--text-muted)' : 'var(--text-primary)' }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-blue)'}
+                  onMouseLeave={e => e.currentTarget.style.color = completed ? 'var(--text-muted)' : 'var(--text-primary)'}
                 >
                   {habit.name}
                 </button>
@@ -228,8 +240,10 @@ export function HabitSection() {
       {/* Add button - floating */}
       <button
         onClick={() => setShowAddForm(true)}
-        className="absolute bottom-4 right-4 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-110"
+        className="absolute bottom-4 right-8 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110"
         style={{ backgroundColor: 'var(--accent-green)' }}
+        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)'}
+        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
       >
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -289,10 +303,20 @@ export function HabitSection() {
                 <button
                   key={i}
                   onClick={() => toggleWeekday(i)}
-                  className="w-8 h-8 rounded text-sm transition-colors"
+                  className="w-8 h-8 rounded text-sm transition-all"
                   style={{
                     backgroundColor: selectedWeekdays.includes(i) ? 'var(--accent-green)' : 'var(--bg-tertiary)',
                     color: selectedWeekdays.includes(i) ? 'white' : 'var(--text-secondary)'
+                  }}
+                  onMouseEnter={e => {
+                    if (!selectedWeekdays.includes(i)) {
+                      e.currentTarget.style.backgroundColor = 'var(--bg-hover)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!selectedWeekdays.includes(i)) {
+                      e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)';
+                    }
                   }}
                 >
                   {day}
@@ -307,10 +331,20 @@ export function HabitSection() {
                 <button
                   key={day}
                   onClick={() => toggleMonthday(day)}
-                  className="h-7 rounded text-xs transition-colors"
+                  className="h-7 rounded text-xs transition-all"
                   style={{
                     backgroundColor: selectedMonthdays.includes(day) ? 'var(--accent-green)' : 'var(--bg-tertiary)',
                     color: selectedMonthdays.includes(day) ? 'white' : 'var(--text-secondary)'
+                  }}
+                  onMouseEnter={e => {
+                    if (!selectedMonthdays.includes(day)) {
+                      e.currentTarget.style.backgroundColor = 'var(--bg-hover)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!selectedMonthdays.includes(day)) {
+                      e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)';
+                    }
                   }}
                 >
                   {day}
@@ -323,8 +357,14 @@ export function HabitSection() {
             <button
               onClick={handleAddHabit}
               disabled={!newName.trim() || (newType === 'weekdays' && selectedWeekdays.length === 0) || (newType === 'monthdays' && selectedMonthdays.length === 0)}
-              className="flex-1 px-3 py-2 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-3 py-2 text-white rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--accent-green)' }}
+              onMouseEnter={e => {
+                if (!e.currentTarget.disabled) {
+                  e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)';
+                }
+              }}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
             >
               追加
             </button>
@@ -336,8 +376,10 @@ export function HabitSection() {
                 setSelectedWeekdays([]);
                 setSelectedMonthdays([]);
               }}
-              className="px-3 py-2 rounded transition-colors"
+              className="px-3 py-2 rounded transition-all"
               style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
             >
               キャンセル
             </button>
@@ -394,22 +436,28 @@ export function HabitSection() {
             <div className="flex gap-2">
               <button
                 onClick={saveEdit}
-                className="flex-1 px-4 py-2 text-white rounded transition-colors"
+                className="flex-1 px-4 py-2 text-white rounded transition-all"
                 style={{ backgroundColor: 'var(--accent-green)' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
               >
                 保存
               </button>
               <button
                 onClick={handleArchive}
-                className="px-4 py-2 rounded transition-colors"
+                className="px-4 py-2 rounded transition-all"
                 style={{ backgroundColor: 'var(--accent-red)', color: 'white' }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
               >
                 アーカイブ
               </button>
               <button
                 onClick={() => setEditingId(null)}
-                className="px-4 py-2 rounded transition-colors"
+                className="px-4 py-2 rounded transition-all"
                 style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
               >
                 キャンセル
               </button>

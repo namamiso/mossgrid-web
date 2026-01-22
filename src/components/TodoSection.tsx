@@ -109,8 +109,10 @@ export function TodoSection() {
               {/* Delete button */}
               <button
                 onClick={() => deleteTodo(todo.id)}
-                className="p-1 transition-colors"
+                className="p-1 transition-all rounded"
                 style={{ color: 'var(--accent-red)' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(248, 81, 73, 0.2)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                 title="削除"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,8 +123,10 @@ export function TodoSection() {
               {/* Title */}
               <button
                 onClick={() => openEdit(todo.id)}
-                className="flex-1 text-left truncate"
+                className="flex-1 text-left truncate transition-colors"
                 style={{ color: 'var(--text-primary)' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-blue)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-primary)'}
               >
                 {todo.title || <span style={{ color: 'var(--text-muted)' }}>(空)</span>}
               </button>
@@ -157,8 +161,14 @@ export function TodoSection() {
         <button
           onClick={handleAdd}
           disabled={!newTitle.trim()}
-          className="px-4 py-2 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-white rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: 'var(--accent-green)' }}
+          onMouseEnter={e => {
+            if (!e.currentTarget.disabled) {
+              e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)';
+            }
+          }}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
         >
           追加
         </button>
@@ -209,15 +219,19 @@ export function TodoSection() {
             <div className="flex gap-2">
               <button
                 onClick={saveEdit}
-                className="flex-1 px-4 py-2 text-white rounded transition-colors"
+                className="flex-1 px-4 py-2 text-white rounded transition-all"
                 style={{ backgroundColor: 'var(--accent-green)' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
               >
                 保存
               </button>
               <button
                 onClick={() => setEditingId(null)}
-                className="px-4 py-2 rounded transition-colors"
+                className="px-4 py-2 rounded transition-all"
                 style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
               >
                 キャンセル
               </button>
