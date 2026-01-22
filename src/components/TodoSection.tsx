@@ -77,7 +77,7 @@ export function TodoSection() {
             {/* Swipe to delete button (visible on hover) */}
             <button
               onClick={() => deleteTodo(todo.id)}
-              className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600 p-1"
+              className="text-red-500 hover:text-red-600 p-1"
               title="削除"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -10,7 +10,7 @@ function App() {
   const { syncState, isSyncing, lastSyncResult, sync } = useStore();
 
   return (
-    <div className="h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="h-screen flex flex-col bg-gray-900 text-gray-100 dark">
       {/* Header */}
       <header className="flex items-center justify-between px-8 py-5 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
@@ -74,7 +74,7 @@ function App() {
         </div>
 
         {/* Habit Section - fixed height with internal scroll */}
-        <div className="flex-shrink-0 max-h-[30vh] overflow-y-auto">
+        <div className="flex-shrink-0">
           <HabitSection />
         </div>
 

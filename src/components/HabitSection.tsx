@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useStore } from '../store';
-import { getHabitDay, isFutureDay } from '../utils/habitDay';
+import { isFutureDay } from '../utils/habitDay';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
 export function HabitSection() {
   const {
     selectedDate,
-    setSelectedDate,
     getActiveHabits,
     isCompleted,
     toggleCompletion,
@@ -22,10 +21,6 @@ export function HabitSection() {
 
   const activeHabits = getActiveHabits(selectedDate);
   const isFuture = isFutureDay(selectedDate);
-
-  const goToToday = () => {
-    setSelectedDate(getHabitDay());
-  };
 
   const handleAddHabit = () => {
     if (!newName.trim()) return;
@@ -65,22 +60,16 @@ export function HabitSection() {
   };
 
   return (
-    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700">
+    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700 flex flex-col min-h-0 max-h-[30vh]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex-shrink-0 mb-3">
         <div className="text-sm text-gray-500">
           選択日: {selectedDate}
         </div>
-        <button
-          onClick={goToToday}
-          className="text-sm text-blue-500 hover:text-blue-600"
-        >
-          今日へ
-        </button>
       </div>
 
       {/* Habit list */}
-      <div className="space-y-2">
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {activeHabits.length === 0 ? (
           <div className="text-sm text-gray-400 py-2">この日の習慣はありません</div>
         ) : (
@@ -106,7 +95,7 @@ export function HabitSection() {
                     </svg>
                   )}
                 </button>
-                <span className={completed ? 'text-gray-400 line-through' : ''}>
+                <span className={completed ? 'text-gray-400' : ''}>
                   {habit.name}
                 </span>
               </div>
