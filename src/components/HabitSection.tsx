@@ -60,10 +60,13 @@ export function HabitSection() {
   };
 
   return (
-    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700 flex flex-col min-h-0 max-h-[30vh]">
+    <div
+      className="px-8 py-6 flex flex-col min-h-0 max-h-[30vh]"
+      style={{ borderTop: '1px solid var(--border-primary)' }}
+    >
       {/* Header */}
       <div className="flex-shrink-0 mb-3">
-        <div className="text-sm text-gray-500">
+        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           選択日: {selectedDate}
         </div>
       </div>
@@ -71,7 +74,7 @@ export function HabitSection() {
       {/* Habit list */}
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {activeHabits.length === 0 ? (
-          <div className="text-sm text-gray-400 py-2">この日の習慣はありません</div>
+          <div className="text-sm py-2" style={{ color: 'var(--text-muted)' }}>この日の習慣はありません</div>
         ) : (
           activeHabits.map(habit => {
             const completed = isCompleted(habit.id, selectedDate);
@@ -83,11 +86,12 @@ export function HabitSection() {
                 <button
                   onClick={() => !isFuture && toggleCompletion(habit.id, selectedDate)}
                   disabled={isFuture}
-                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                    completed
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-green-400'
-                  } ${isFuture ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${isFuture ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  style={{
+                    backgroundColor: completed ? 'var(--accent-green)' : 'transparent',
+                    border: completed ? 'none' : '2px solid var(--border-primary)',
+                    color: 'white'
+                  }}
                 >
                   {completed && (
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -95,7 +99,7 @@ export function HabitSection() {
                     </svg>
                   )}
                 </button>
-                <span className={completed ? 'text-gray-400' : ''}>
+                <span style={{ color: completed ? 'var(--text-muted)' : 'var(--text-primary)' }}>
                   {habit.name}
                 </span>
               </div>
@@ -108,19 +112,28 @@ export function HabitSection() {
       {!showAddForm ? (
         <button
           onClick={() => setShowAddForm(true)}
-          className="mt-3 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          className="mt-3 flex items-center gap-2 text-sm transition-colors"
+          style={{ color: 'var(--text-secondary)' }}
         >
-          <span className="w-5 h-5 rounded border border-dashed border-gray-400 flex items-center justify-center text-xs">+</span>
+          <span
+            className="w-5 h-5 rounded flex items-center justify-center text-xs"
+            style={{ border: '1px dashed var(--border-primary)', color: 'var(--text-muted)' }}
+          >+</span>
           習慣を追加
         </button>
       ) : (
-        <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
+        <div className="mt-3 p-3 rounded-lg space-y-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
           <input
             type="text"
             value={newName}
             onChange={e => setNewName(e.target.value.slice(0, 100))}
             placeholder="習慣名"
-            className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-3 py-2 rounded"
+            style={{
+              backgroundColor: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-primary)',
+              color: 'var(--text-primary)'
+            }}
             maxLength={100}
             autoFocus
           />
@@ -128,7 +141,12 @@ export function HabitSection() {
           <select
             value={newType}
             onChange={e => setNewType(e.target.value as 'daily' | 'weekdays' | 'monthdays')}
-            className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-3 py-2 rounded"
+            style={{
+              backgroundColor: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-primary)',
+              color: 'var(--text-primary)'
+            }}
           >
             <option value="daily">毎日</option>
             <option value="weekdays">曜日指定</option>
@@ -141,11 +159,11 @@ export function HabitSection() {
                 <button
                   key={i}
                   onClick={() => toggleWeekday(i)}
-                  className={`w-8 h-8 rounded text-sm ${
-                    selectedWeekdays.includes(i)
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-600'
-                  }`}
+                  className="w-8 h-8 rounded text-sm transition-colors"
+                  style={{
+                    backgroundColor: selectedWeekdays.includes(i) ? 'var(--accent-green)' : 'var(--bg-tertiary)',
+                    color: selectedWeekdays.includes(i) ? 'white' : 'var(--text-secondary)'
+                  }}
                 >
                   {day}
                 </button>
@@ -159,11 +177,11 @@ export function HabitSection() {
                 <button
                   key={day}
                   onClick={() => toggleMonthday(day)}
-                  className={`h-7 rounded text-xs ${
-                    selectedMonthdays.includes(day)
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-600'
-                  }`}
+                  className="h-7 rounded text-xs transition-colors"
+                  style={{
+                    backgroundColor: selectedMonthdays.includes(day) ? 'var(--accent-green)' : 'var(--bg-tertiary)',
+                    color: selectedMonthdays.includes(day) ? 'white' : 'var(--text-secondary)'
+                  }}
                 >
                   {day}
                 </button>
@@ -175,7 +193,8 @@ export function HabitSection() {
             <button
               onClick={handleAddHabit}
               disabled={!newName.trim() || (newType === 'weekdays' && selectedWeekdays.length === 0) || (newType === 'monthdays' && selectedMonthdays.length === 0)}
-              className="flex-1 px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-3 py-2 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ backgroundColor: 'var(--accent-green)' }}
             >
               追加
             </button>
@@ -187,7 +206,8 @@ export function HabitSection() {
                 setSelectedWeekdays([]);
                 setSelectedMonthdays([]);
               }}
-              className="px-3 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
+              className="px-3 py-2 rounded transition-colors"
+              style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
             >
               キャンセル
             </button>

@@ -60,7 +60,10 @@ export function TodoSection() {
   };
 
   return (
-    <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700 flex-1 flex flex-col min-h-0">
+    <div
+      className="px-8 py-6 flex-1 flex flex-col min-h-0"
+      style={{ borderTop: '1px solid var(--border-primary)' }}
+    >
       {/* Todo list */}
       <div className="flex-1 overflow-y-auto space-y-1">
         {activeTodos.map((todo, index) => (
@@ -70,14 +73,18 @@ export function TodoSection() {
             onDragStart={() => handleDragStart(index)}
             onDragOver={(e) => handleDragOver(e, index)}
             onDragEnd={handleDragEnd}
-            className={`group flex items-center gap-2 py-2 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
+            className={`group flex items-center gap-2 py-2 px-2 rounded transition-colors ${
               dragIndex === index ? 'opacity-50' : ''
             }`}
+            style={{ backgroundColor: 'transparent' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            {/* Swipe to delete button (visible on hover) */}
+            {/* Delete button */}
             <button
               onClick={() => deleteTodo(todo.id)}
-              className="text-red-500 hover:text-red-600 p-1"
+              className="p-1 transition-colors"
+              style={{ color: 'var(--accent-red)' }}
               title="削除"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,12 +96,13 @@ export function TodoSection() {
             <button
               onClick={() => openEdit(todo.id)}
               className="flex-1 text-left truncate"
+              style={{ color: 'var(--text-primary)' }}
             >
-              {todo.title || <span className="text-gray-400">(空)</span>}
+              {todo.title || <span style={{ color: 'var(--text-muted)' }}>(空)</span>}
             </button>
 
             {/* Drag handle */}
-            <div className="cursor-grab opacity-0 group-hover:opacity-100 text-gray-400 p-1">
+            <div className="cursor-grab opacity-0 group-hover:opacity-100 p-1" style={{ color: 'var(--text-muted)' }}>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm8-16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
               </svg>
@@ -111,13 +119,19 @@ export function TodoSection() {
           onChange={e => setNewTitle(e.target.value.slice(0, 100))}
           onKeyDown={handleKeyDown}
           placeholder="新しいToDo..."
-          className="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+          className="flex-1 px-3 py-2 rounded"
+          style={{
+            backgroundColor: 'var(--bg-tertiary)',
+            border: '1px solid var(--border-primary)',
+            color: 'var(--text-primary)'
+          }}
           maxLength={100}
         />
         <button
           onClick={handleAdd}
           disabled={!newTitle.trim()}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: 'var(--accent-green)' }}
         >
           追加
         </button>
@@ -125,15 +139,26 @@ export function TodoSection() {
 
       {/* Edit modal */}
       {editingId && (
-        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 w-full sm:max-w-md sm:rounded-lg p-4 space-y-4">
-            <h3 className="text-lg font-bold">ToDo編集</h3>
+        <div
+          className="fixed inset-0 flex items-end sm:items-center justify-center z-50"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+        >
+          <div
+            className="w-full sm:max-w-md sm:rounded-lg p-4 space-y-4"
+            style={{ backgroundColor: 'var(--bg-secondary)' }}
+          >
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>ToDo編集</h3>
             <input
               type="text"
               value={editTitle}
               onChange={e => setEditTitle(e.target.value.slice(0, 100))}
               placeholder="タイトル"
-              className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+              className="w-full px-3 py-2 rounded"
+              style={{
+                backgroundColor: 'var(--bg-tertiary)',
+                border: '1px solid var(--border-primary)',
+                color: 'var(--text-primary)'
+              }}
               maxLength={100}
               autoFocus
             />
@@ -141,19 +166,26 @@ export function TodoSection() {
               value={editMemo}
               onChange={e => setEditMemo(e.target.value.slice(0, 100))}
               placeholder="メモ"
-              className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 h-24 resize-none"
+              className="w-full px-3 py-2 rounded h-24 resize-none"
+              style={{
+                backgroundColor: 'var(--bg-tertiary)',
+                border: '1px solid var(--border-primary)',
+                color: 'var(--text-primary)'
+              }}
               maxLength={100}
             />
             <div className="flex gap-2">
               <button
                 onClick={saveEdit}
-                className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                className="flex-1 px-4 py-2 text-white rounded transition-colors"
+                style={{ backgroundColor: 'var(--accent-green)' }}
               >
                 保存
               </button>
               <button
                 onClick={() => setEditingId(null)}
-                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
+                className="px-4 py-2 rounded transition-colors"
+                style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
               >
                 キャンセル
               </button>

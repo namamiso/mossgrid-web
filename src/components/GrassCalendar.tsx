@@ -61,12 +61,12 @@ export function GrassCalendar() {
   }, [calendarData]);
 
   const getColor = (rate: number, isFuture: boolean): string => {
-    if (isFuture) return 'bg-gray-100 dark:bg-gray-800';
-    if (rate === 0) return 'bg-gray-200 dark:bg-gray-700';
-    if (rate <= 0.25) return 'bg-green-200 dark:bg-green-900';
-    if (rate <= 0.5) return 'bg-green-400 dark:bg-green-700';
-    if (rate <= 0.75) return 'bg-green-500 dark:bg-green-600';
-    return 'bg-green-600 dark:bg-green-500';
+    if (isFuture) return 'var(--bg-tertiary)';
+    if (rate === 0) return 'var(--grass-0)';
+    if (rate <= 0.25) return 'var(--grass-1)';
+    if (rate <= 0.5) return 'var(--grass-2)';
+    if (rate <= 0.75) return 'var(--grass-3)';
+    return 'var(--grass-4)';
   };
 
   const goToToday = () => {
@@ -82,21 +82,30 @@ export function GrassCalendar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setDisplayYear(y => y - 1)}
-            className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="px-2 py-1 text-sm rounded transition-colors"
+            style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
           >
             &lt;
           </button>
-          <span className="text-lg font-bold min-w-16 text-center">{displayYear}</span>
+          <span className="text-lg font-bold min-w-16 text-center" style={{ color: 'var(--text-primary)' }}>{displayYear}</span>
           <button
             onClick={() => setDisplayYear(y => y + 1)}
-            className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="px-2 py-1 text-sm rounded transition-colors"
+            style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
           >
             &gt;
           </button>
         </div>
         <button
           onClick={goToToday}
-          className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
+          className="px-3 py-1 text-sm text-white rounded transition-colors"
+          style={{ backgroundColor: 'var(--accent-green)' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
         >
           Today
         </button>
@@ -112,8 +121,8 @@ export function GrassCalendar() {
               {monthPositions.map(({ month, weekIndex }) => (
                 <span
                   key={`${month}-${weekIndex}`}
-                  className="absolute text-xs text-gray-500"
-                  style={{ left: weekIndex * 13 }}
+                  className="absolute text-xs"
+                  style={{ left: weekIndex * 13, color: 'var(--text-muted)' }}
                 >
                   {MONTH_LABELS[month]}
                 </span>
@@ -126,7 +135,7 @@ export function GrassCalendar() {
             {/* Weekday labels */}
             <div className="flex flex-col gap-0.5 mr-1">
               {WEEKDAY_LABELS.map((label, i) => (
-                <div key={i} className="h-3 text-xs text-gray-500 leading-3">{label}</div>
+                <div key={i} className="h-3 text-xs leading-3" style={{ color: 'var(--text-muted)' }}>{label}</div>
               ))}
             </div>
 
@@ -148,9 +157,12 @@ export function GrassCalendar() {
                         key={date}
                         onClick={() => !future && setSelectedDate(date)}
                         disabled={future}
-                        className={`w-3 h-3 rounded-sm ${getColor(rate, future)} ${
-                          isSelected ? 'ring-2 ring-blue-500' : ''
-                        } ${future ? 'cursor-not-allowed' : 'cursor-pointer hover:ring-1 hover:ring-gray-400'}`}
+                        className={`w-3 h-3 rounded-sm ${future ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        style={{
+                          backgroundColor: getColor(rate, future),
+                          outline: isSelected ? '2px solid var(--accent-blue)' : 'none',
+                          outlineOffset: '-1px'
+                        }}
                         title={`${date}: ${Math.round(rate * 100)}%`}
                       />
                     );
