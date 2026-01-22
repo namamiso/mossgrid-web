@@ -65,7 +65,7 @@ export function HabitSection() {
   };
 
   return (
-    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+    <div className="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="text-sm text-gray-500">
