@@ -240,7 +240,7 @@ export function HabitSection() {
       {/* Add button - floating */}
       <button
         onClick={() => setShowAddForm(true)}
-        className="absolute bottom-4 right-12 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110"
+        className="absolute bottom-4 right-14 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:scale-110"
         style={{ backgroundColor: 'var(--accent-green)' }}
         onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--accent-green-hover)'}
         onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--accent-green)'}
