@@ -86,6 +86,7 @@ interface StoreContextType {
   addHabit: (name: string, type: 'daily' | 'weekdays' | 'monthdays', weekdaysMask?: number, monthdays?: number[]) => void;
   updateHabit: (id: string, updates: Partial<Pick<Habit, 'name' | 'memo' | 'sort_order'>>) => void;
   archiveHabit: (id: string) => void;
+  reorderHabits: (fromIndex: number, toIndex: number) => void;
   toggleCompletion: (habitId: string, habitDay: string) => void;
 
   // Computed
@@ -516,6 +517,25 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     ));
   }, []);
 
+  const reorderHabits = useCallback((fromIndex: number, toIndex: number) => {
+    setHabits(prev => {
+      const activeHabits = prev.filter(h => h.is_archived === 0).sort((a, b) => a.sort_order - b.sort_order);
+      const [moved] = activeHabits.splice(fromIndex, 1);
+      activeHabits.splice(toIndex, 0, moved);
+
+      const updatedIds = new Map<string, number>();
+      activeHabits.forEach((h, i) => updatedIds.set(h.id, i + 1));
+
+      return prev.map(h => {
+        const newOrder = updatedIds.get(h.id);
+        if (newOrder !== undefined && newOrder !== h.sort_order) {
+          return { ...h, sort_order: newOrder, updated_at: now(), updated_by: syncStateRef.current.device_id, dirty: 1 };
+        }
+        return h;
+      });
+    });
+  }, []);
+
   const toggleCompletion = useCallback((habitId: string, habitDay: string) => {
     setCompletions(prev => {
       const existing = prev.find(c => c.habit_id === habitId && c.habit_day === habitDay);
@@ -594,6 +614,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       addHabit,
       updateHabit,
       archiveHabit,
+      reorderHabits,
       toggleCompletion,
       getActiveHabits,
       getCompletionRate,

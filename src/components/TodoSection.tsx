@@ -8,7 +8,8 @@ export function TodoSection() {
   const [editTitle, setEditTitle] = useState('');
   const [editMemo, setEditMemo] = useState('');
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const dragOverIndex = useRef<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragNode = useRef<HTMLDivElement | null>(null);
 
   const activeTodos = todos
     .filter(t => t.is_deleted === 0)
@@ -42,22 +43,43 @@ export function TodoSection() {
     }
   };
 
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragIndex(index);
+    dragNode.current = e.currentTarget as HTMLDivElement;
+    e.dataTransfer.effectAllowed = 'move';
+    // Make drag image transparent
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(img, 0, 0);
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    dragOverIndex.current = index;
+    if (dragIndex === null || dragIndex === index) return;
+    setDragOverIndex(index);
   };
 
   const handleDragEnd = () => {
-    if (dragIndex !== null && dragOverIndex.current !== null && dragIndex !== dragOverIndex.current) {
-      reorderTodos(dragIndex, dragOverIndex.current);
+    if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
+      reorderTodos(dragIndex, dragOverIndex);
     }
     setDragIndex(null);
-    dragOverIndex.current = null;
+    setDragOverIndex(null);
+    dragNode.current = null;
   };
+
+  // Get display order for smooth animation
+  const getDisplayItems = () => {
+    if (dragIndex === null || dragOverIndex === null || dragIndex === dragOverIndex) {
+      return activeTodos;
+    }
+    const items = [...activeTodos];
+    const [dragged] = items.splice(dragIndex, 1);
+    items.splice(dragOverIndex, 0, dragged);
+    return items;
+  };
+
+  const displayItems = getDisplayItems();
 
   return (
     <div
@@ -66,49 +88,54 @@ export function TodoSection() {
     >
       {/* Todo list */}
       <div className="flex-1 overflow-y-auto space-y-1">
-        {activeTodos.map((todo, index) => (
-          <div
-            key={todo.id}
-            draggable
-            onDragStart={() => handleDragStart(index)}
-            onDragOver={(e) => handleDragOver(e, index)}
-            onDragEnd={handleDragEnd}
-            className={`group flex items-center gap-2 py-2 px-2 rounded transition-colors ${
-              dragIndex === index ? 'opacity-50' : ''
-            }`}
-            style={{ backgroundColor: 'transparent' }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            {/* Delete button */}
-            <button
-              onClick={() => deleteTodo(todo.id)}
-              className="p-1 transition-colors"
-              style={{ color: 'var(--accent-red)' }}
-              title="削除"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
+        {displayItems.map((todo, index) => {
+          const originalIndex = activeTodos.findIndex(t => t.id === todo.id);
+          const isDragging = originalIndex === dragIndex;
 
-            {/* Title */}
-            <button
-              onClick={() => openEdit(todo.id)}
-              className="flex-1 text-left truncate"
-              style={{ color: 'var(--text-primary)' }}
+          return (
+            <div
+              key={todo.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, originalIndex)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`group flex items-center gap-2 py-2 px-2 rounded transition-all duration-200 ${
+                isDragging ? 'opacity-50 scale-95' : ''
+              }`}
+              style={{ backgroundColor: 'transparent' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              {todo.title || <span style={{ color: 'var(--text-muted)' }}>(空)</span>}
-            </button>
+              {/* Delete button */}
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                className="p-1 transition-colors"
+                style={{ color: 'var(--accent-red)' }}
+                title="削除"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
 
-            {/* Drag handle */}
-            <div className="cursor-grab opacity-0 group-hover:opacity-100 p-1" style={{ color: 'var(--text-muted)' }}>
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm8-16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
-              </svg>
+              {/* Title */}
+              <button
+                onClick={() => openEdit(todo.id)}
+                className="flex-1 text-left truncate"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {todo.title || <span style={{ color: 'var(--text-muted)' }}>(空)</span>}
+              </button>
+
+              {/* Drag handle */}
+              <div className="cursor-grab opacity-0 group-hover:opacity-100 p-1" style={{ color: 'var(--text-muted)' }}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm8-16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
+                </svg>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Add todo input */}
@@ -142,6 +169,11 @@ export function TodoSection() {
         <div
           className="fixed inset-0 flex items-end sm:items-center justify-center z-50"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setEditingId(null);
+            }
+          }}
         >
           <div
             className="w-full sm:max-w-md sm:rounded-lg p-4 space-y-4"
