@@ -417,19 +417,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Todo actions
   const addTodo = useCallback((title: string, memo = '') => {
-    const maxOrder = todosRef.current.filter(t => t.is_deleted === 0).reduce((max, t) => Math.max(max, t.sort_order), 0);
+    const timestamp = now();
+    const deviceId = syncStateRef.current.device_id;
     const todo: Todo = {
       id: uuid(),
       title,
       memo,
-      sort_order: maxOrder + 1,
+      sort_order: 1,
       is_deleted: 0,
       deleted_at: null,
-      updated_at: now(),
-      updated_by: syncStateRef.current.device_id,
+      updated_at: timestamp,
+      updated_by: deviceId,
       dirty: 1,
     };
-    setTodos(prev => [...prev, todo]);
+    // 既存のTodoのsort_orderを+1して、新しいTodoを先頭に
+    setTodos(prev => [
+      todo,
+      ...prev.map(t => t.is_deleted === 0
+        ? { ...t, sort_order: t.sort_order + 1, updated_at: timestamp, updated_by: deviceId, dirty: 1 }
+        : t
+      ),
+    ]);
   }, []);
 
   const updateTodo = useCallback((id: string, updates: Partial<Pick<Todo, 'title' | 'memo' | 'sort_order'>>) => {
